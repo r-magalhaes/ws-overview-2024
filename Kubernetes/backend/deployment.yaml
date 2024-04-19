@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ws-backend-deployment
+  labels:
+    app: ws-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ws-backend
+  template:
+    metadata:
+      labels:
+        app: ws-backend
+    spec:
+      containers:
+      - name: ws-backend
+        image: ricardomiguel/ws-be:workshop-first
+        ports:
+        - containerPort: 5000
+        env:
+          - name: PGUSER
+            valueFrom:
+              secretKeyRef:
+                name: be-secret
+                key: user
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: be-secret
+                key: pass
+          - name: PGHOST
+            valueFrom:
+              configMapKeyRef:
+                name: be-cm
+                key: host
+          - name: PGPORT
+            valueFrom:
+              configMapKeyRef:
+                name: be-cm
+                key: port
+          - name: PGDATABASE
+            valueFrom:
+              secretKeyRef:
+                name: be-secret
+                key: database
